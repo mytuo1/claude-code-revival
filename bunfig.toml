@@ -1,0 +1,9 @@
+[install]
+registry = "https://registry.npmjs.org"
+
+[build]
+target = "node"
+splitting = false
+
+[run]
+env = { DEBUG_TO_STDERR = "1" }
