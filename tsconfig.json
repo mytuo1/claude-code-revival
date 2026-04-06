@@ -7,15 +7,16 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "baseUrl": "./src",
     "outDir": "./dist",
     "rootDir": "./src",
     "paths": {
+      "src/*": ["./*"],
       "@ant/*": ["../stubs/@ant/*"],
-      "src/*": ["./*"]
+      "@anthropic-ai/mcpb": ["../stubs/@anthropic-ai/mcpb"],
+      "react/compiler-runtime": ["../stubs/react/compiler-runtime"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "stubs/**/*"],
   "exclude": ["node_modules", "dist"]
 }
