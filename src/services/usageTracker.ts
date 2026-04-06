@@ -1,5 +1,6 @@
 import type { LLMResponse } from './llm/types.js';
 import { log } from '../utils/log.js';
+import { debugReporter } from './debugReporter.js';
 
 export class UsageTracker {
   private totalInput = 0;
