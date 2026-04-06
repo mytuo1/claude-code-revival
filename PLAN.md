@@ -27,7 +27,7 @@ This plan is based on a full inspection of the repo structure (30+ top-level dir
 
 ## 2. Phase 0: Preparation (10 minutes)
 
-~~bash
+```bash
 git clone https://github.com/mytuo1/fork.git claude-code-revival
 cd claude-code-revival
 
@@ -38,14 +38,14 @@ find . -name "*:Zone.Identifier" -delete
 mkdir -p src
 mv *.ts *.tsx src/ 2>/dev/null || true
 mv assistant bootstrap bridge buddy cli commands components constants context coordinator entrypoints hooks ink keybindings memdir migrations moreright native-ts outputStyles plugins query remote schemas screens server services skills state tasks tools types upstreamproxy utils vim voice src/ 2>/dev/null || true
-~~
+```
 
 ---
 
 ## 3. Phase 1: Modern Build Environment (copy-paste these files)
 
 **`package.json`** (updated for multi-provider)
-~~json
+```json
 {
   "name": "claude-code-revival",
   "version": "0.3.0",
@@ -76,10 +76,10 @@ mv assistant bootstrap bridge buddy cli commands components constants context co
   },
   "engines": { "bun": ">=1.2.0" }
 }
-~~
+```
 
 **`tsconfig.json`**
-~~json
+```json
 {
   "compilerOptions": {
     "target": "ESNext",
@@ -97,20 +97,20 @@ mv assistant bootstrap bridge buddy cli commands components constants context co
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
-~~
+```
 
 **`bunfig.toml`**
-~~toml
+```toml
 [run]
 env = { DEBUG_TO_STDERR = "1" }
-~~
+```
 
 **.gitignore** (standard + stubs if needed)
 
 Then run:
-~~bash
+```bash
 bun install
-~~
+```
 
 ---
 
@@ -131,7 +131,7 @@ Create `src/services/llm/` — this is where we break the Anthropic-only depende
    - `grok.ts` (xAI direct if needed, but OpenAI compat works via `https://api.x.ai`)
 
 **Example factory** (adapt to match original `services/api/claude.ts` signature):
-~~typescript
+```typescript
 // src/services/llm/factory.ts
 import { OpenAI } from 'openai';
 import type { QueryEngineConfig } from '../..'; // adjust path
@@ -155,19 +155,19 @@ export function createLLMClient(config: QueryEngineConfig) {
       throw new Error(`Unsupported provider: ${provider}`);
   }
 }
-~~
+```
 
 **Adaptation step**: In `services/api/claude.ts` (and any file importing it), replace the direct Anthropic SDK calls with `createLLMClient()` from the new layer. This is the **only** place you touch the original LLM code.
 
 Add to `.env.example`:
-~~env
+```env
 LLM_PROVIDER=openai          # or anthropic, xai, ollama
 OPENAI_API_KEY=sk-...
 XAI_API_KEY=xai-...          # for Grok
 ANTHROPIC_API_KEY=sk-ant-...
 OLLAMA_BASE_URL=http://localhost:11434
 MODEL=grok-beta              # or gpt-4o, claude-3.5-sonnet, llama3.2, etc.
-~~
+```
 
 ---
 
@@ -179,9 +179,9 @@ MODEL=grok-beta              # or gpt-4o, claude-3.5-sonnet, llama3.2, etc.
 - Add minimal shims for missing internal utils (e.g., logging, cost tracking) if TypeScript complains — most are in `services/`.
 
 **First test command**:
-~~bash
+```bash
 bun run dev:repl
-~~
+```
 
 This should launch a minimal REPL that can talk to whatever LLM you configured.
 
@@ -192,15 +192,15 @@ This should launch a minimal REPL that can talk to whatever LLM you configured.
 - `tools/`, `skills/`, `services/mcp/`, `services/tools/` are mostly provider-agnostic (they define schemas that get passed to the LLM).
 - Computer-use / browser MCP can stay (they work over OpenAI-compatible tool calling).
 - Make heavy features optional via flags:
-  ~~~typescript
+  ```typescript
   const ENABLE_COMPUTER_USE = process.env.ENABLE_COMPUTER_USE !== 'false';
-  ~~~
+  ```
 
 ---
 
 ## 7. Running the Project
 
-~~bash
+```bash
 # 1. Setup
 bun install
 
@@ -212,7 +212,7 @@ cp .env.example .env
 bun run dev          # full TUI
 bun run dev:repl     # minimal REPL (great for debugging)
 bun start            # built version
-~~
+```
 
 **Quickstart for different providers**:
 - OpenAI: `LLM_PROVIDER=openai`
